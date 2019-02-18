@@ -23,8 +23,18 @@ function appStart() {
     brightnessSlider.oninput = function () {
         brightnessChange(this.value);
     }
+
+    let contrastSlider = document.querySelector('#contrast');
+
+    contrastSlider.oninput = function () {
+        contrastChange(this.value);
+    }
 }
 
 function brightnessChange(value) {
     canvas.style.filter = `brightness(${value}%)`;
+}
+
+function contrastChange(value) {
+    canvas.style.filter = `contrast(${value}%)`;
 }
