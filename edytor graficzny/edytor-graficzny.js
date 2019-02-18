@@ -29,6 +29,12 @@ function appStart() {
     contrastSlider.oninput = function () {
         contrastChange(this.value);
     }
+
+    let saturationSlider = document.querySelector('#saturation');
+
+    saturationSlider.oninput = function () {
+        saturationChange(this.value);
+    }
 }
 
 function brightnessChange(value) {
@@ -37,4 +43,8 @@ function brightnessChange(value) {
 
 function contrastChange(value) {
     canvas.style.filter = `contrast(${value}%)`;
+}
+
+function saturationChange(value) {
+    canvas.style.filter = `saturate(${value}%)`;
 }
