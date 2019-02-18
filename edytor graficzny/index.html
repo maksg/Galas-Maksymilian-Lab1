@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Edytor graficzny</title>
+    <style>
+    </style>
+</head>
+<body>
+    <canvas width="600" height="300" id="ps"></canvas>
+    <p>Brightness</p>
+    <input type="range" min="0" max="100" value="50" class="slider" id="brightness">
+    <p>Contrast</p>
+    <input type="range" min="0" max="100" value="50" class="slider" id="contrast">
+    <p>Saturation</p>
+    <input type="range" min="0" max="100" value="50" class="slider" id="saturation">
+
+
+    <script>
+        let canvas = document.querySelector('#ps');
+        let ctx = canvas.getContext('2d');
+        
+        let img = new Image();
+        //img.src = 'https://picsum.photos/600/300/?random=1';
+        img.src = './grafika.jpg';
+        img.addEventListener('load', ()=>{
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        })
+
+        let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        console.log(imageData);
+
+        let brightnessSlider = document.querySelector('#brightness');
+
+        brightnessSlider.oninput = function() {
+            brightnessChange(this.value);
+        } 
+
+        function brightnessChange(value) {
+            let factor = value/100.0;
+            console.log(factor);
+            let newImageData = new ImageData(canvas.width, canvas.height);
+
+            for (let i = 0; i<imageData.data.length; i+=4) {
+                newImageData.data[i] = imageData.data[i]*factor;
+                newImageData.data[i+1] = imageData.data[i+1]*factor;
+                newImageData.data[i+2] = imageData.data[i+2]*factor;
+                //console.log(newImageData.data[i+1]);
+                //console.log(newImageData.data[i+2]);
+            }
+
+            ctx.putImageData(newImageData, 0, 0);
+        }
+        /*let slider = document.querySelector('#slider');
+        slider.addEventListener('mouseenter', resumeStopAnimation);
+        slider.addEventListener('mouseleave', resumeStopAnimation);
+
+        //slider.addEventListener('click', resizeImage);
+        
+        let sliderImgs = document.querySelectorAll('#slider img');
+        sliderImgs.forEach(function(element) {
+            element.addEventListener('click', resizeImage);
+        });
+
+        let sliderPositionLeft = 0;
+        slider.style.left = '0px';
+
+        let shouldAnimate = true;
+        let zoomed = false
+
+        animate();
+        //setInterval(animate, 16);
+
+        function animate() {
+            if (shouldAnimate) {
+                //setTimeout(animate, 16);
+                sliderPositionLeft--;
+                //slider.style.left = sliderPositionLeft + 'px';
+                slider.style.left = `${sliderPositionLeft}px`;
+
+                requestAnimationFrame(animate);
+            }
+        }
+
+        function resumeStopAnimation(e) {
+            shouldAnimate = !shouldAnimate;
+            requestAnimationFrame(animate);
+        }
+
+        function resizeImage(e) {
+            e.target.style.zoom = zoomed ? 1.0 : 1.5;
+            zoomed = !zoomed;
+        }*/
+    </script>
+</body>
+</html>

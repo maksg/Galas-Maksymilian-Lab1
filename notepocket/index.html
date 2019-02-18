@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>NotePocket</title>
+    <style>
+        body, html {
+            margin: 0;
+            height: 100%;
+        }
+        #container {
+            height: 100%;
+            display: flex;
+        }
+        #sidePanel {
+            width: 24%;
+            height: 100%;
+            background-color: burlywood;
+            overflow-y: auto;
+        }
+        #noteView {
+            height: 100%;
+            background-color: sandybrown;
+            flex-grow: 10;
+            display: flex;
+            flex-direction: column;
+        }
+        #noteTitle {
+            margin: 10px;
+            width: 50%;
+            background-color: thistle;
+        }
+        #noteText {
+            width: 100%;
+            background-color: whitesmoke;
+            flex-grow: 10;
+        }
+        #notesTable {
+            width: 100%;
+        }
+        #notesTable tr td {
+            padding: 10px;
+        }
+        #notesTable tr td {
+            border-bottom: 1px solid black;
+        }
+        #notesTable tr td b, #notesTable tr td p {
+            margin: 0;
+        }
+    </style>
+    <script src="notepocket.js"></script>
+</head>
+<body>
+    <div id="container">
+        <div id="sidePanel">
+            <table id="notesTable">
+                <tr>
+                    <td id="newNoteRow">
+                        <button id="newNoteButton">Nowa notatka</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="noteView">
+            <input id="noteTitle" type="text" />
+            <textarea id="noteText"></textarea>
+        </div>
+    </div>
+</body>
+</html>
