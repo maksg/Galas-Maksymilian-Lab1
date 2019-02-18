@@ -1,22 +1,21 @@
 document.addEventListener('DOMContentLoaded', appStart);
 
 let canvas;
-let ctx;
-let imageData;
+
+var brightness = 100;
+var contrast = 100;
+var saturation = 100;
 
 function appStart() {
     canvas = document.querySelector('#ps');
-    ctx = canvas.getContext('2d');
+    let ctx = canvas.getContext('2d');
 
     let img = new Image();
-    //img.src = 'https://picsum.photos/600/300/?random=1';
-    img.src = './grafika.jpg';
+    img.src = 'https://picsum.photos/600/300/?random=1';
+    //img.src = './grafika.jpg';
     img.addEventListener('load', () => {
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     })
-
-    imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    console.log(imageData);
 
     let brightnessSlider = document.querySelector('#brightness');
 
@@ -38,13 +37,20 @@ function appStart() {
 }
 
 function brightnessChange(value) {
-    canvas.style.filter = `brightness(${value}%)`;
+    brightness = value;
+    setFilters();
 }
 
 function contrastChange(value) {
-    canvas.style.filter = `contrast(${value}%)`;
+    contrast = value;
+    setFilters();
 }
 
 function saturationChange(value) {
-    canvas.style.filter = `saturate(${value}%)`;
+    saturation = value;
+    setFilters();
+}
+
+function setFilters() {
+    canvas.style.filter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%)`;
 }
