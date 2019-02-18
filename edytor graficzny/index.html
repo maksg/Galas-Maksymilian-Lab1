@@ -6,93 +6,74 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Edytor graficzny</title>
     <style>
+        html {
+            height: 100%;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            font-size: 16;
+            color: white;
+        }
+        body {
+            height: 100%;
+            margin: 0;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-image: linear-gradient(to bottom right, #d3d3d3, black);
+        }
+        #container {
+            display: flex;
+            flex-direction: column;
+            align-content: center;
+            align-items: center;
+        }
+        .slider {
+            -webkit-appearance: none;
+            width: 200px;
+            height: 20px;
+            border-radius: 10px;   
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+        }
+
+        .slider:hover {
+            opacity: 1;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            background: rgb(255, 201, 51);
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            background: rgb(255, 201, 51);
+            cursor: pointer;
+        }
     </style>
+    <script src="edytor-graficzny.js"></script>
 </head>
 <body>
-    <canvas width="600" height="300" id="ps"></canvas>
-    <p>Brightness</p>
-    <input type="range" min="0" max="100" value="50" class="slider" id="brightness">
-    <p>Contrast</p>
-    <input type="range" min="0" max="100" value="50" class="slider" id="contrast">
-    <p>Saturation</p>
-    <input type="range" min="0" max="100" value="50" class="slider" id="saturation">
-
-
-    <script>
-        let canvas = document.querySelector('#ps');
-        let ctx = canvas.getContext('2d');
-        
-        let img = new Image();
-        //img.src = 'https://picsum.photos/600/300/?random=1';
-        img.src = './grafika.jpg';
-        img.addEventListener('load', ()=>{
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        })
-
-        let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        console.log(imageData);
-
-        let brightnessSlider = document.querySelector('#brightness');
-
-        brightnessSlider.oninput = function() {
-            brightnessChange(this.value);
-        } 
-
-        function brightnessChange(value) {
-            let factor = value/100.0;
-            console.log(factor);
-            let newImageData = new ImageData(canvas.width, canvas.height);
-
-            for (let i = 0; i<imageData.data.length; i+=4) {
-                newImageData.data[i] = imageData.data[i]*factor;
-                newImageData.data[i+1] = imageData.data[i+1]*factor;
-                newImageData.data[i+2] = imageData.data[i+2]*factor;
-                //console.log(newImageData.data[i+1]);
-                //console.log(newImageData.data[i+2]);
-            }
-
-            ctx.putImageData(newImageData, 0, 0);
-        }
-        /*let slider = document.querySelector('#slider');
-        slider.addEventListener('mouseenter', resumeStopAnimation);
-        slider.addEventListener('mouseleave', resumeStopAnimation);
-
-        //slider.addEventListener('click', resizeImage);
-        
-        let sliderImgs = document.querySelectorAll('#slider img');
-        sliderImgs.forEach(function(element) {
-            element.addEventListener('click', resizeImage);
-        });
-
-        let sliderPositionLeft = 0;
-        slider.style.left = '0px';
-
-        let shouldAnimate = true;
-        let zoomed = false
-
-        animate();
-        //setInterval(animate, 16);
-
-        function animate() {
-            if (shouldAnimate) {
-                //setTimeout(animate, 16);
-                sliderPositionLeft--;
-                //slider.style.left = sliderPositionLeft + 'px';
-                slider.style.left = `${sliderPositionLeft}px`;
-
-                requestAnimationFrame(animate);
-            }
-        }
-
-        function resumeStopAnimation(e) {
-            shouldAnimate = !shouldAnimate;
-            requestAnimationFrame(animate);
-        }
-
-        function resizeImage(e) {
-            e.target.style.zoom = zoomed ? 1.0 : 1.5;
-            zoomed = !zoomed;
-        }*/
-    </script>
+    <div id="container">
+        <canvas width="600" height="300" id="ps"></canvas>
+        <div id="sliders">
+            <p>Brightness</p>
+            <input type="range" min="0" max="200" value="100" class="slider" id="brightness">
+            <p>Contrast</p>
+            <input type="range" min="0" max="200" value="100" class="slider" id="contrast">
+            <p>Saturation</p>
+            <input type="range" min="0" max="200" value="100" class="slider" id="saturation">
+            <p>Blur</p>
+            <input type="range" min="0" max="10" value="0" class="slider" id="blur">
+            <p>Sepia</p>
+            <input type="range" min="0" max="100" value="0" class="slider" id="sepia">
+            <p>Invert</p>
+            <input type="range" min="0" max="100" value="0" class="slider" id="invert">
+        </div>
+    </div>
 </body>
 </html>
