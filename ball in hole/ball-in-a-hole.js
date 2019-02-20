@@ -4,6 +4,8 @@ var canvas;
 var ctx;
 var player;
 var holes = [];
+var startDate;
+var finishDate;
 
 function appStart() {
     canvas = document.getElementById("canvas");
@@ -31,7 +33,7 @@ function startGame() {
     player = new Player();
     player.setPosition(canvas.width / 2, canvas.height / 2);
 
-    for (var i = 0; i < 20; i++) {
+    for (var i = 0; i < 2; i++) {
         var hole = new Hole()
         var x = Math.floor((Math.random() * canvas.width - hole.getSize().width * 2) + hole.getSize().width * 2);
         var y = Math.floor((Math.random() * canvas.height - hole.getSize().height * 2) + hole.getSize().height * 2);
@@ -40,6 +42,8 @@ function startGame() {
     }
 
     holes[0].setActive();
+
+    startDate = Date.now();
 }
 
 function Player() {
@@ -101,6 +105,9 @@ function Player() {
                 holes.splice(0, 1);
                 if (holes.length > 0) {
                     holes[0].setActive();
+                } else {
+                    finishDate = Date.now();
+                    setTimeout(startGame, 3000);
                 }
             } else {
                 var x = Math.floor((Math.random() * canvas.width - size.width * 2) + size.width * 2);
@@ -162,6 +169,31 @@ function drawFrame() {
     });
 
     player.render();
+
+    var delta;
+    if (holes.length > 0) {
+        delta = Date.now() - startDate;
+    } else {
+        delta = finishDate - startDate;
+    }
+    var minutes = Math.floor(delta / 60000);
+    var seconds = ((delta % 60000) / 1000).toFixed(0);
+    var miliseconds = ((delta % 1000) / 10).toFixed(0);
+
+    if (minutes < 10) {
+        minutes = '0' + minutes;
+    }
+    if (seconds < 10) {
+        seconds = '0' + seconds;
+    }
+    if (miliseconds < 10) {
+        miliseconds = '0' + miliseconds;
+    }
+
+    ctx.font = "30px Arial";
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+    ctx.fillText(`${minutes}:${seconds}:${miliseconds}`, canvas.width/2, 50); 
 }
 
 function moveMe(event) {
