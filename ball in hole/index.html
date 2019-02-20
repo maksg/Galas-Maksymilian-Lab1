@@ -14,82 +14,11 @@
             height: 800px;
         }
     </style>
+    <script src="ball-in-a-hole.js"></script>
 </head>
 <body>
     <div id="canvasDiv">
         <canvas width="450" height="800" id="canvas"></canvas>
     </div>
-
-    <script>
-        function Player(ctx)
-        {
-            var context = ctx;
-            var position = {x: 0, y: 0};
-            var size = {width: 30, height: 30};
-
-            this.setPosition = function (x, y)
-            {
-                position.x = x;
-                position.y = y;
-            };
-
-            this.getPosition = function ()
-            {
-                return position;
-            };
-
-            this.getSize = function ()
-            {
-                return size;
-            };
-
-            this.render = function ()
-            {
-                context.beginPath();
-                context.arc(position.x, position.y, size.width, 0, 2 * Math.PI);
-                context.fillStyle = "red";
-                context.fill();
-            }
-        }
-
-
-        var canvas = document.getElementById("canvas");
-        var ctx = canvas.getContext("2d");
-
-        var player = new Player(ctx);
-        player.setPosition(canvas.width/2, canvas.height/2);
-
-        /*animate();
-
-        function animate() {
-            player.setPosition(player.getPosition().x, player.getPosition().y+1);
-            drawFrame();
-            requestAnimationFrame(animate);
-        }*/
-
-        drawFrame();
-        
-        function drawFrame()
-        {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            ctx.beginPath();
-            ctx.rect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "rgb(197,126,20)";
-            ctx.fill();
-
-            player.render();
-        }
-
-        window.addEventListener('deviceorientation', moveMe)
-
-        function moveMe(event) {
-            var widthMultiplier = canvas.width/180;
-            var heightMultiplier = canvas.height/180;
-            player.setPosition(canvas.width/2 + event.gamma*widthMultiplier, canvas.height/2 + event.beta*heightMultiplier);
-            drawFrame();
-            console.log(event);
-        }
-    </script>
 </body>
 </html>
