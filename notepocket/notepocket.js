@@ -12,16 +12,27 @@ function Note(title, content, color, pinned, createdDate) {
     this.content = content;
     this.color = color;
     this.pinned = pinned;
-    this.createdDate = createdDate;
+    
+    var createdDate = createdDate;
+
+    this.getCreatedDate = function () {
+        var date = createdDate.getDate();
+        var month = createdDate.getMonth();
+        var year = createdDate.getFullYear();
+        var hours = createdDate.getHours();
+        var minutes = createdDate.getMinutes();
+
+        return `${date}.${month}.${year} ${hours}:${minutes}`
+    }
 }
 
-var notes = [new Note("Test 1", "sdgs gsggdgsdg sdsd ", NoteColor.red, false, Date.now()),
-            new Note("Test Drugi", "hhhhhhh ", NoteColor.green, true, Date.now())];
+var notes = [new Note("Test 1", "sdgs gsggdgsdg sdsd ", NoteColor.red, false, new Date()),
+        new Note("Test Drugi", "hhhhhhh ", NoteColor.green, true, new Date())];
 
 function appStart() {
     var newNoteButton = document.querySelector('#newNoteButton');
     newNoteButton.addEventListener('click', function (e) {
-        var note = new Note("", "", NoteColor.green, false, Date.now());
+        var note = new Note("", "", NoteColor.green, false, new Date());
         addNote(note);
         notes.push(note);
     });
@@ -54,7 +65,7 @@ function addNote(note) {
     var cell = row.insertCell(0);
     cell.note = note;
     cell.style.backgroundColor = 'red';
-    cell.innerHTML = `<b>${note.title}</b><br><p>${note.content}</p>`;
+    cell.innerHTML = `<b>${note.title}</b><br><p>${note.content}</p><br><p>${note.getCreatedDate()}</p>`;
 
     noteTitle.value = note.title;
     noteContent.value = note.content;
@@ -88,8 +99,9 @@ var selectNote = function (i, notesTableCells) {
         var currentCell = notesTableCells[i];
         notesTableCells.forEach(cell => {
             cell.style.backgroundColor = '';
+            cell.style.borderColor = 'black';
             if (cell.pinned) {
-                cell.style.borderWidth = "4px";
+                cell.style.borderWidth = "20px";
             } else {
                 cell.style.borderWidth = "1px";
             }
