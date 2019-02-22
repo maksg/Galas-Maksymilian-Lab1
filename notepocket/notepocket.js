@@ -3,8 +3,8 @@ document.addEventListener('DOMContentLoaded', appStart);
 var selectedNote = 0;
 
 const NoteColor = {
-    green: "green",
-    red: "red"
+    green: 'green',
+    red: 'red'
 };
 
 function Note(title, content, color, pinned, createdDate) {
@@ -12,8 +12,7 @@ function Note(title, content, color, pinned, createdDate) {
     this.content = content;
     this.color = color;
     this.pinned = pinned;
-    
-    var createdDate = createdDate;
+    this.createdDate = createdDate;
 
     this.getCreatedDate = function () {
         var date = createdDate.getDate();
@@ -26,15 +25,18 @@ function Note(title, content, color, pinned, createdDate) {
     }
 }
 
-var notes = [new Note("Test 1", "sdgs gsggdgsdg sdsd ", NoteColor.red, false, new Date()),
-        new Note("Test Drugi", "hhhhhhh ", NoteColor.green, true, new Date())];
+var notes = [];
 
 function appStart() {
+    loadNotes();
+
     var newNoteButton = document.querySelector('#newNoteButton');
     newNoteButton.addEventListener('click', function (e) {
-        var note = new Note("", "", NoteColor.green, false, new Date());
+        var note = new Note('', '', NoteColor.green, false, new Date());
         addNote(note);
         notes.push(note);
+
+        saveNotes();
     });
 
     notes.forEach( note => {
@@ -86,12 +88,31 @@ function updateNoteCells() {
         var cell = notesTableCells[i];
         var index = notesTableCells.length - 2 - i;
         var note = notes[index];
-        cell.innerHTML = `<b>${note.title}</b><br><p>${note.content}</p>`;
+        cell.innerHTML = `<b>${note.title}</b><br><p>${note.content}</p><br><p>${note.getCreatedDate()}</p>`;
     }
+
+    saveNotes();
 }
 
 function colorNotes() {
 
+}
+
+function loadNotes() {
+    var loadedNotes = JSON.parse(localStorage.getItem('notes'));
+
+    if (loadedNotes == null) {
+        notes = [new Note('dżem', 'gffg', NoteColor.green, false, new Date())];
+    } else {
+        notes = [];
+        loadedNotes.forEach(note => {
+            notes.push(new Note(note.title, note.content, note.color, note.pinned, new Date(note.createdDate)));
+        });
+    }
+}
+
+function saveNotes() {
+    localStorage.setItem('notes', JSON.stringify(notes));
 }
 
 var selectNote = function (i, notesTableCells) {
