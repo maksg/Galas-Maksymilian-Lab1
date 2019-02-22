@@ -24,16 +24,19 @@ function appStart() {
         playSound(charCode);
     });
 
+    // Get buttons
     var recordButtons = document.querySelectorAll('.record');
     var playButtons = document.querySelectorAll('.play');
     var keyButtons = document.querySelectorAll('.key');
 
+    // Initialize everything
     for(var i=0; i<recordButtons.length; i++) {
         channels.push([]);
         isRecording.push(false);
         recStartTime.push(0);
     }
 
+    // Add click events
     recordButtons.forEach(button => {
         button.addEventListener('click', recordAudio);
     });
@@ -80,6 +83,7 @@ function playSound(charCode) {
 
     playAudioDOM(soundName);
 
+    // Add sound if channel is recording
     isRecording.forEach((isRecording, index) => {
         if(isRecording) {
             channels[index].push(
