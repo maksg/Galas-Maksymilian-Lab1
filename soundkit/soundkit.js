@@ -17,67 +17,75 @@ const channels = [];
 const isRecording = [];
 const recStartTime = [];
 
+// Start app
 function appStart() {
-    window.addEventListener('keypress', playSound);
+    window.addEventListener('keypress', function (e) {
+        var charCode = e.charCode;
+        playSound(charCode);
+    });
+
+    // Get buttons
     var recordButtons = document.querySelectorAll('.record');
     var playButtons = document.querySelectorAll('.play');
-    console.log(recordButtons);
-    console.log(playButtons);
+    var keyButtons = document.querySelectorAll('.key');
 
+    // Initialize everything
     for(var i=0; i<recordButtons.length; i++) {
         channels.push([]);
         isRecording.push(false);
         recStartTime.push(0);
     }
-    
-    console.log(channels);
-    console.log(isRecording);
-    console.log(recStartTime);
 
+    // Add click events
     recordButtons.forEach(button => {
         button.addEventListener('click', recordAudio);
     });
     playButtons.forEach(button => {
         button.addEventListener('click', playAudio);
     });
-
-    //document.querySelector('#record').addEventListener('click', recordAudio);
-    //document.querySelector('#play').addEventListener('click', playAudio);
+    keyButtons.forEach(button => {
+        button.addEventListener('click', function (e) {
+            var charCode = e.target.value;
+            playSound(charCode);
+        });
+    });
 }
 
+// Start or stop recording
 function recordAudio(e) {
     var index = e.target.value;
     isRecording[index] = !isRecording[index];
     recStartTime[index] = Date.now();
-    /*if(isRecording[index]) {
+    if(isRecording[index]) {
         channels[index] = [];
-    }*/
+    }
     e.target.innerHTML = isRecording[index] ? 'Stop' : 'Record';
 }
 
-function playAudio() {
+// Play recorded audio
+function playAudio(e) {
     var index = e.target.value;
     channels[index].forEach(sound => {
-        setTimeout(
-            () => {
+        setTimeout( () => {
                 playAudioDOM(sound.name);
             }, sound.time
         )
     });
 }
 
-function playSound(e) {
-    if(!sounds[e.charCode]) {
+// Play sound based on pressed key
+function playSound(charCode) {
+    var soundName = sounds[charCode]
+
+    if (!soundName) {
         return;
     }
 
-    playAudioDOM(sounds[e.charCode]);
+    playAudioDOM(soundName);
 
-    console.log(isRecording);
+    // Add sound if channel is recording
     isRecording.forEach((isRecording, index) => {
-        console.log(isRecording, index);
         if(isRecording) {
-            console.log(channels[index]);
             channels[index].push(
                 {
                     name: soundName,
@@ -89,6 +97,7 @@ function playSound(e) {
 
 }
 
+// Play audio file
 function playAudioDOM(soundName) {
     const audioDOM = document.querySelector(`#${soundName}`);
     audioDOM.currentTime = 0;
