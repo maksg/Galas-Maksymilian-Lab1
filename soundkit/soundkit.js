@@ -17,22 +17,17 @@ const channels = [];
 const isRecording = [];
 const recStartTime = [];
 
+// Start app
 function appStart() {
     window.addEventListener('keypress', playSound);
     var recordButtons = document.querySelectorAll('.record');
     var playButtons = document.querySelectorAll('.play');
-    console.log(recordButtons);
-    console.log(playButtons);
 
     for(var i=0; i<recordButtons.length; i++) {
         channels.push([]);
         isRecording.push(false);
         recStartTime.push(0);
     }
-    
-    console.log(channels);
-    console.log(isRecording);
-    console.log(recStartTime);
 
     recordButtons.forEach(button => {
         button.addEventListener('click', recordAudio);
@@ -40,44 +35,42 @@ function appStart() {
     playButtons.forEach(button => {
         button.addEventListener('click', playAudio);
     });
-
-    //document.querySelector('#record').addEventListener('click', recordAudio);
-    //document.querySelector('#play').addEventListener('click', playAudio);
 }
 
+// Start or stop recording
 function recordAudio(e) {
     var index = e.target.value;
     isRecording[index] = !isRecording[index];
     recStartTime[index] = Date.now();
-    /*if(isRecording[index]) {
+    if(isRecording[index]) {
         channels[index] = [];
-    }*/
+    }
     e.target.innerHTML = isRecording[index] ? 'Stop' : 'Record';
 }
 
-function playAudio() {
+// Play recorded audio
+function playAudio(e) {
     var index = e.target.value;
     channels[index].forEach(sound => {
-        setTimeout(
-            () => {
+        setTimeout( () => {
                 playAudioDOM(sound.name);
             }, sound.time
         )
     });
 }
 
+// Play sound based on pressed key
 function playSound(e) {
-    if(!sounds[e.charCode]) {
+    var soundName = sounds[e.charCode]
+
+    if (!soundName) {
         return;
     }
 
-    playAudioDOM(sounds[e.charCode]);
+    playAudioDOM(soundName);
 
-    console.log(isRecording);
     isRecording.forEach((isRecording, index) => {
-        console.log(isRecording, index);
         if(isRecording) {
-            console.log(channels[index]);
             channels[index].push(
                 {
                     name: soundName,
@@ -89,6 +82,7 @@ function playSound(e) {
 
 }
 
+// Play audio file
 function playAudioDOM(soundName) {
     const audioDOM = document.querySelector(`#${soundName}`);
     audioDOM.currentTime = 0;
