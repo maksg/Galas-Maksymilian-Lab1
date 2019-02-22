@@ -19,9 +19,14 @@ const recStartTime = [];
 
 // Start app
 function appStart() {
-    window.addEventListener('keypress', playSound);
+    window.addEventListener('keypress', function (e) {
+        var charCode = e.charCode;
+        playSound(charCode);
+    });
+
     var recordButtons = document.querySelectorAll('.record');
     var playButtons = document.querySelectorAll('.play');
+    var keyButtons = document.querySelectorAll('.key');
 
     for(var i=0; i<recordButtons.length; i++) {
         channels.push([]);
@@ -34,6 +39,12 @@ function appStart() {
     });
     playButtons.forEach(button => {
         button.addEventListener('click', playAudio);
+    });
+    keyButtons.forEach(button => {
+        button.addEventListener('click', function (e) {
+            var charCode = e.target.value;
+            playSound(charCode);
+        });
     });
 }
 
@@ -60,8 +71,8 @@ function playAudio(e) {
 }
 
 // Play sound based on pressed key
-function playSound(e) {
-    var soundName = sounds[e.charCode]
+function playSound(charCode) {
+    var soundName = sounds[charCode]
 
     if (!soundName) {
         return;

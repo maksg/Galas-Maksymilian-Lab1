@@ -6,38 +6,115 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>SoundKit</title>
     <style>
+        html {
+            height: 100%;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            font-size: 16;
+            color: white;
+        }
+        body {
+            height: 100%;
+            margin: 0;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-image: linear-gradient(to bottom right, #d3d3d3, black);
+        }
+        p {
+            text-align: center;
+            font-size: 2.0em;
+        }
+        #channelsContainer {
+            display: inline-block;
+        }
+        #channelsContainer button {
+            margin: 0px 20px 0px 20px;
+            width: 300px;
+            height: 50px;
+            background-color: crimson;
+            border-radius: 50px;
+            font-size: 1.6em;
+            color: white;
+        }
+        #container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-content: center;
+            align-items: center;
+        }
+        #audioContainer {
+            display: none;
+        }
+        #keysContainer {
+            margin: 50px 0px 0px 0px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-content: space-between;
+            align-items: center;
+        }
+        .key {
+            margin: 0px 15px 0px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            background-color: indigo;
+            border-radius: 50px;
+            font-size: 4.0em;
+            color: white;
+        }
     </style>
     <script src="soundkit.js"></script>
 </head>
 <body>
-    <p>Channel 1</p>
-    <button class="record" value="0">Record</button>
-    <button class="play" value="0">Play</button>
-    <br>
-    <br>
-    <p>Channel 2</p>
-    <button class="record" value="1">Record</button>
-    <button class="play" value="1">Play</button>
-    <br>
-    <br>
-    <p>Channel 3</p>
-    <button class="record" value="2">Record</button>
-    <button class="play" value="2">Play</button>
-    <br>
-    <br>
-    <p>Channel 4</p>
-    <button class="record" value="3">Record</button>
-    <button class="play" value="3">Play</button>
-    <br>
-    <br>
-    <audio src="sounds/boom.wav" controls id="boom"></audio>
-    <audio src="sounds/clap.wav" controls id="clap"></audio>
-    <audio src="sounds/hihat.wav" controls id="hihat"></audio>
-    <audio src="sounds/kick.wav" controls id="kick"></audio>
-    <audio src="sounds/openhat.wav" controls id="openhat"></audio>
-    <audio src="sounds/ride.wav" controls id="ride"></audio>
-    <audio src="sounds/snare.wav" controls id="snare"></audio>
-    <audio src="sounds/tink.wav" controls id="tink"></audio>
-    <audio src="sounds/tom.wav" controls id="tom"></audio>
+    <div id="container">
+        <div id="channelsContainer">
+            <p>Channel 1</p>
+            <button class="record" value="0">Record</button>
+            <button class="play" value="0">Play</button>
+            <br>
+            <br>
+            <p>Channel 2</p>
+            <button class="record" value="1">Record</button>
+            <button class="play" value="1">Play</button>
+            <br>
+            <br>
+            <p>Channel 3</p>
+            <button class="record" value="2">Record</button>
+            <button class="play" value="2">Play</button>
+            <br>
+            <br>
+            <p>Channel 4</p>
+            <button class="record" value="3">Record</button>
+            <button class="play" value="3">Play</button>
+            <br>
+            <br>
+        </div>
+        <div id="keysContainer">
+            <button class="key" value="97">A</button>
+            <button class="key" value="115">S</button>
+            <button class="key" value="100">D</button>
+            <button class="key" value="102">F</button>
+            <button class="key" value="103">G</button>
+            <button class="key" value="104">H</button>
+            <button class="key" value="106">J</button>
+            <button class="key" value="107">K</button>
+            <button class="key" value="108">L</button>
+        </div>
+    </div>
+    <div id="audioContainer">
+        <audio src="sounds/boom.wav" controls id="boom"></audio>
+        <audio src="sounds/clap.wav" controls id="clap"></audio>
+        <audio src="sounds/hihat.wav" controls id="hihat"></audio>
+        <audio src="sounds/kick.wav" controls id="kick"></audio>
+        <audio src="sounds/openhat.wav" controls id="openhat"></audio>
+        <audio src="sounds/ride.wav" controls id="ride"></audio>
+        <audio src="sounds/snare.wav" controls id="snare"></audio>
+        <audio src="sounds/tink.wav" controls id="tink"></audio>
+        <audio src="sounds/tom.wav" controls id="tom"></audio>
+    </div>
 </body>
 </html>
