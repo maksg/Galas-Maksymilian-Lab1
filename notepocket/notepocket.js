@@ -15,10 +15,10 @@ function Note(title, content, color, pinned, createdDate) {
     this.createdDate = createdDate;
 }
 
-function appStart() {
-    var notes = [new Note("Test 1", "sdgs gsggdgsdg sdsd ", NoteColor.red, false, Date.now()),
-    new Note("Test Drugi", "hhhhhhh ", NoteColor.green, true, Date.now())];
+var notes = [new Note("Test 1", "sdgs gsggdgsdg sdsd ", NoteColor.red, false, Date.now()),
+            new Note("Test Drugi", "hhhhhhh ", NoteColor.green, true, Date.now())];
 
+function appStart() {
     var newNoteButton = document.querySelector('#newNoteButton');
     newNoteButton.addEventListener('click', function (e) {
         var note = new Note("", "", NoteColor.green, false, Date.now());
@@ -27,12 +27,20 @@ function appStart() {
     });
 
     notes.forEach( note => {
-        console.log(note);
         addNote(note);
     });
-    
+
     var noteTitle = document.querySelector('#noteTitle');
-    var noteText = document.querySelector('#noteText');
+    noteTitle.addEventListener('input', function (e) {
+        notes[selectedNote].title = e.target.value;
+        updateNoteCells();
+    });
+
+    var noteContent = document.querySelector('#noteContent');
+    noteContent.addEventListener('input', function (e) {
+        notes[selectedNote].content = e.target.value;
+        updateNoteCells();
+    });
 }
 
 function addNote(note) {
@@ -41,27 +49,57 @@ function addNote(note) {
     notesTableCells.forEach(cell => {
         cell.style.backgroundColor = '';
     })
+
     var row = notesTable.insertRow(0);
     var cell = row.insertCell(0);
+    cell.note = note;
     cell.style.backgroundColor = 'red';
     cell.innerHTML = `<b>${note.title}</b><br><p>${note.content}</p>`;
-    //cell.addEventListener('click', selectNote);
+
+    noteTitle.value = note.title;
+    noteContent.value = note.content;
     
     notesTableCells = notesTable.querySelectorAll('tr td');
-    for (i = 0; i < notesTableCells.length - 1; i++) {
-        var currentCell = notesTableCells[i];
-        var selectNote = function(i, currentCell) {
-            return function() {
-                notesTableCells.forEach(cell => {
-                    cell.style.backgroundColor = '';
-                })
-                selectedNote = i;
-                currentCell.style.backgroundColor = 'red';
-            };
-        };
-        currentCell.onclick = selectNote(i, currentCell);
+    for (var i = 0; i < notesTableCells.length - 1; i++) {
+        notesTableCells[i].onclick = selectNote(i, notesTableCells);
+    }
+
+    selectedNote = notesTableCells.length - 2;
+}
+
+function updateNoteCells() {
+    var notesTable = document.querySelector('#notesTable');
+    var notesTableCells = notesTable.querySelectorAll('tr td');
+
+    for (var i = 0; i < notesTableCells.length - 1; i++) {
+        var cell = notesTableCells[i];
+        var index = notesTableCells.length - 2 - i;
+        var note = notes[index];
+        cell.innerHTML = `<b>${note.title}</b><br><p>${note.content}</p>`;
     }
 }
 
-//function selectNote(e) {
-//}
+function colorNotes() {
+
+}
+
+var selectNote = function (i, notesTableCells) {
+    return function () {
+        var currentCell = notesTableCells[i];
+        notesTableCells.forEach(cell => {
+            cell.style.backgroundColor = '';
+            if (cell.pinned) {
+                cell.style.borderWidth = "4px";
+            } else {
+                cell.style.borderWidth = "1px";
+            }
+        })
+        currentCell.style.backgroundColor = 'red';
+
+        selectedNote = notesTableCells.length - 2 - i;
+
+        var note = notes[selectedNote];
+        noteTitle.value = note.title;
+        noteContent.value = note.content;
+    }
+}
