@@ -38,6 +38,9 @@
             display: flex;
             flex-direction: row\;
         }
+        .colorButton {
+            width: 50px;
+        }
         #noteTitle {
             flex-grow: 10;
             font-size: 2.0em;
@@ -46,7 +49,7 @@
         }
         #noteContent {
             width: 100%;
-            background-color: whitesmoke;
+            background-color: red;
             flex-grow: 10;
         }
         #notesTable {
@@ -79,6 +82,9 @@
         <div id="noteView">
             <div id="headerView">
                 <input id="noteTitle" type="text" />
+                <button class="colorButton" value="red"></button>
+                <button class="colorButton" value="green"></button>
+                <button class="colorButton" value="blue"></button>
                 <button id="pinButton">Przypnij</button>
             </div>
             <textarea id="noteContent"></textarea>

@@ -4,9 +4,10 @@ var selectedNote = 0;
 var notes = [];
 
 const NoteColor = {
+    red: 'red',
     green: 'green',
-    red: 'red'
-};
+    blue: 'blue'
+}
 
 function Note(title, content, color, pinned, createdDate) {
     this.title = title;
@@ -15,6 +16,7 @@ function Note(title, content, color, pinned, createdDate) {
     this.pinned = pinned;
     this.createdDate = createdDate;
 
+    // Get note created date string
     this.getCreatedDate = function () {
         var date = createdDate.getDate();
         var month = createdDate.getMonth();
@@ -29,6 +31,7 @@ function Note(title, content, color, pinned, createdDate) {
 function appStart() {
     loadNotes();
 
+    // Add click action to new note button
     var newNoteButton = document.querySelector('#newNoteButton');
     newNoteButton.addEventListener('click', function (e) {
         var note = new Note('', '', NoteColor.green, false, new Date());
@@ -37,18 +40,21 @@ function appStart() {
         saveNotes();
     });
 
+    // Add text change listener to note title
     var noteTitle = document.querySelector('#noteTitle');
     noteTitle.addEventListener('input', function (e) {
         notes[selectedNote].title = e.target.value;
         updateNoteCells();
     });
 
+    // Add text change listener to note content
     var noteContent = document.querySelector('#noteContent');
     noteContent.addEventListener('input', function (e) {
         notes[selectedNote].content = e.target.value;
         updateNoteCells();
     });
 
+    // Add click action to pin button
     var pinButton = document.querySelector('#pinButton');
     pinButton.innerHTML = notes[selectedNote].pinned ? 'Odepnij' : 'Przypnij';
     pinButton.addEventListener('click', function (e) {
@@ -56,8 +62,21 @@ function appStart() {
         sortNotes();
         updateNoteCells();
     });
+
+    // Add click action to color buttons
+    var colorButtons = document.querySelectorAll('.colorButton');
+    colorButtons.forEach(button => {
+        button.style.backgroundColor = button.value;
+        button.addEventListener('click', function (e) {
+            var color = e.target.value;
+            notes[selectedNote].color = color;
+            noteContent.style.backgroundColor = color;
+            saveNotes();
+        });
+    });
 }
 
+// Create new note
 function addNote(note) {
     var notesTable = document.querySelector('#notesTable');
     var notesTableCells = notesTable.querySelectorAll('tr td');
@@ -83,6 +102,7 @@ function addNote(note) {
     selectedNote = notesTableCells.length - 2;
 }
 
+// Update note cells in table
 function updateNoteCells() {
     var notesTable = document.querySelector('#notesTable');
     var notesTableCells = notesTable.querySelectorAll('tr td');
@@ -108,11 +128,12 @@ function colorNotes() {
 
 }
 
+// Load notes from local storage
 function loadNotes() {
     var loadedNotes = JSON.parse(localStorage.getItem('notes'));
 
     if (loadedNotes == null) {
-        notes = [new Note('dżem', 'gffg', NoteColor.green, false, new Date())];
+        notes = [new Note('', '', NoteColor.green, false, new Date())];
     } else {
         notes = [];
         loadedNotes.forEach(note => {
@@ -121,15 +142,17 @@ function loadNotes() {
     }
 
     sortNotes();
-    
+
     var notesTableCells = notesTable.querySelectorAll('tr td');
     selectNote(0, notesTableCells)();
 }
 
+// Save notes to local storage
 function saveNotes() {
     localStorage.setItem('notes', JSON.stringify(notes));
 }
 
+// Sort notes
 function sortNotes() {
     let currentNote = notes[selectedNote];
 
@@ -149,22 +172,26 @@ function sortNotes() {
         }
     });
 
+    // Clear table
     var notesTable = document.querySelector('#notesTable');
     var notesTableCells = notesTable.querySelectorAll('tr');
     for (var i = 0; i < notesTableCells.length - 1; i++) {
         notesTableCells[i].remove();
     }
 
+    // Add notes
     notes.forEach(note => {
         addNote(note);
     });
 
+    // Reselect note
     notesTableCells = notesTable.querySelectorAll('tr td');
     var index = notes.findIndex(note => note == currentNote);
     index = notesTableCells.length - 2 - index;
     selectNote(index, notesTableCells)();
 }
 
+// Select clicked note
 var selectNote = function (i, notesTableCells) {
     return function () {
         selectedNote = notesTableCells.length - 2 - i;
@@ -172,6 +199,7 @@ var selectNote = function (i, notesTableCells) {
         var note = notes[selectedNote];
         noteTitle.value = note.title;
         noteContent.value = note.content;
+        noteContent.style.backgroundColor = note.color;
         pinButton.innerHTML = note.pinned ? 'Odepnij' : 'Przypnij';
 
         updateNoteCells();
