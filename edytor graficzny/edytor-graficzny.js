@@ -6,9 +6,6 @@ let ctx;
 var brightness = 100;
 var contrast = 100;
 var saturation = 100;
-var blur = 0;
-var sepia = 0;
-var invert = 0;
 
 var position = { x: 0, y: 0 };
 
@@ -23,7 +20,6 @@ function appStart() {
     img.src = './grafika.jpg';
     img.addEventListener('load', () => {
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
         imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     })
 
@@ -40,21 +36,6 @@ function appStart() {
     let saturationSlider = document.querySelector('#saturation');
     saturationSlider.oninput = function () {
         saturationChange(this.value);
-    }
-
-    let blurSlider = document.querySelector('#blur');
-    blurSlider.oninput = function () {
-        blurChange(this.value);
-    }
-
-    let sepiaSlider = document.querySelector('#sepia');
-    sepiaSlider.oninput = function () {
-        sepiaChange(this.value);
-    }
-
-    let invertSlider = document.querySelector('#invert');
-    invertSlider.oninput = function () {
-        invertChange(this.value);
     }
 
     canvas.addEventListener('mousemove', draw);
@@ -123,25 +104,6 @@ function fixPixel(pixel) {
         return 0;
     }
     return pixel;
-}
-
-function blurChange(value) {
-    blur = value;
-    setFilters();
-}
-
-function sepiaChange(value) {
-    sepia = value;
-    setFilters();
-}
-
-function invertChange(value) {
-    invert = value;
-    setFilters();
-}
-
-function setFilters() {
-    canvas.style.filter = `blur(${blur}px) sepia(${sepia}%) invert(${invert}%)`;
 }
 
 function setPosition(e) {
