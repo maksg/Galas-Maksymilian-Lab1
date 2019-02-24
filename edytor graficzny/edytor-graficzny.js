@@ -25,17 +25,20 @@ function appStart() {
 
     let brightnessSlider = document.querySelector('#brightness');
     brightnessSlider.oninput = function () {
-        brightnessChange(this.value);
+        brightness = this.value;
+        setupFilters();
     }
 
     let contrastSlider = document.querySelector('#contrast');
     contrastSlider.oninput = function () {
-        contrastChange(this.value);
+        contrast = this.value;
+        setupFilters();
     }
 
     let saturationSlider = document.querySelector('#saturation');
     saturationSlider.oninput = function () {
-        saturationChange(this.value);
+        saturation = this.value;
+        setupFilters();
     }
 
     canvas.addEventListener('mousemove', draw);
@@ -43,10 +46,17 @@ function appStart() {
     canvas.addEventListener('mouseenter', setPosition);
 }
 
-function brightnessChange(value) {
-    brightness = value;
+function setupFilters() {
+    var newImageData;
+    newImageData = brightnessChange(imageData);
+    newImageData = contrastChange(newImageData);
+    newImageData = saturationChange(newImageData);
 
-    let factor = value / 100.0;
+    ctx.putImageData(newImageData, 0, 0);
+}
+
+function brightnessChange(imageData) {
+    let factor = brightness / 100.0;
     let newImageData = new ImageData(canvas.width, canvas.height);
 
     for (let i = 0; i < imageData.data.length; i += 4) {
@@ -56,13 +66,11 @@ function brightnessChange(value) {
         newImageData.data[i + 3] = 255;
     }
 
-    ctx.putImageData(newImageData, 0, 0);
+    return newImageData;
 }
 
-function contrastChange(value) {
-    contrast = value;
-
-    let factor = value / 100.0;
+function contrastChange(imageData) {
+    let factor = contrast / 100.0;
     let newImageData = new ImageData(canvas.width, canvas.height);
 
     for (let i = 0; i < imageData.data.length; i += 4) {
@@ -72,29 +80,27 @@ function contrastChange(value) {
         newImageData.data[i + 3] = 255;
     }
 
-    ctx.putImageData(newImageData, 0, 0);
+    return newImageData;
 }
 
-function saturationChange(value) {
-    saturation = value;
-
-    let factor = value / 100.0;
+function saturationChange(imageData) {
+    let factor = saturation / 100.0;
     let newImageData = new ImageData(canvas.width, canvas.height);
 
     for (let i = 0; i < imageData.data.length; i += 4) {
         var red = imageData.data[i];
         var green = imageData.data[i + 1];
         var blue = imageData.data[i + 2];
-        var saturation = Math.sqrt(red * red * 0.299 + green * green * 0.587 + blue * blue * 0.114);
+        var sat = Math.sqrt(red * red * 0.299 + green * green * 0.587 + blue * blue * 0.114);
 
-        newImageData.data[i] = fixPixel(saturation + (red - saturation) * factor);
-        newImageData.data[i + 1] = fixPixel(saturation + (green - saturation) * factor);
-        newImageData.data[i + 2] = fixPixel(saturation + (blue - saturation) * factor);
+        newImageData.data[i] = fixPixel(sat + (red - sat) * factor);
+        newImageData.data[i + 1] = fixPixel(sat + (green - sat) * factor);
+        newImageData.data[i + 2] = fixPixel(sat + (blue - sat) * factor);
 
         newImageData.data[i + 3] = 255;
     }
 
-    ctx.putImageData(newImageData, 0, 0);
+    return newImageData;
 }
 
 function fixPixel(pixel) {
