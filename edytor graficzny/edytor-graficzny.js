@@ -6,51 +6,39 @@ let ctx;
 var brightness = 100;
 var contrast = 100;
 var saturation = 100;
-var blur = 0;
-var sepia = 0;
-var invert = 0;
 
 var position = { x: 0, y: 0 };
+
+let imageData;
 
 function appStart() {
     canvas = document.querySelector('#ps');
     ctx = canvas.getContext('2d');
 
     let img = new Image();
-    img.src = 'https://picsum.photos/600/300/?random=1';
-    //img.src = './grafika.jpg';
+    //img.src = 'https://picsum.photos/600/300/?random=1';
+    img.src = './grafika.jpg';
     img.addEventListener('load', () => {
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     })
 
     let brightnessSlider = document.querySelector('#brightness');
     brightnessSlider.oninput = function () {
-        brightnessChange(this.value);
+        brightness = this.value;
+        setupFilters();
     }
 
     let contrastSlider = document.querySelector('#contrast');
     contrastSlider.oninput = function () {
-        contrastChange(this.value);
+        contrast = this.value;
+        setupFilters();
     }
 
     let saturationSlider = document.querySelector('#saturation');
     saturationSlider.oninput = function () {
-        saturationChange(this.value);
-    }
-
-    let blurSlider = document.querySelector('#blur');
-    blurSlider.oninput = function () {
-        blurChange(this.value);
-    }
-
-    let sepiaSlider = document.querySelector('#sepia');
-    sepiaSlider.oninput = function () {
-        sepiaChange(this.value);
-    }
-
-    let invertSlider = document.querySelector('#invert');
-    invertSlider.oninput = function () {
-        invertChange(this.value);
+        saturation = this.value;
+        setupFilters();
     }
 
     canvas.addEventListener('mousemove', draw);
@@ -58,38 +46,70 @@ function appStart() {
     canvas.addEventListener('mouseenter', setPosition);
 }
 
-function brightnessChange(value) {
-    brightness = value;
-    setFilters();
+function setupFilters() {
+    var newImageData;
+    newImageData = brightnessChange(imageData);
+    newImageData = contrastChange(newImageData);
+    newImageData = saturationChange(newImageData);
+
+    ctx.putImageData(newImageData, 0, 0);
 }
 
-function contrastChange(value) {
-    contrast = value;
-    setFilters();
+function brightnessChange(imageData) {
+    let factor = brightness / 100.0;
+    let newImageData = new ImageData(canvas.width, canvas.height);
+
+    for (let i = 0; i < imageData.data.length; i += 4) {
+        newImageData.data[i] = fixPixel(imageData.data[i] * factor);
+        newImageData.data[i + 1] = fixPixel(imageData.data[i + 1] * factor);
+        newImageData.data[i + 2] = fixPixel(imageData.data[i + 2] * factor);
+        newImageData.data[i + 3] = 255;
+    }
+
+    return newImageData;
 }
 
-function saturationChange(value) {
-    saturation = value;
-    setFilters();
+function contrastChange(imageData) {
+    let factor = contrast / 100.0;
+    let newImageData = new ImageData(canvas.width, canvas.height);
+
+    for (let i = 0; i < imageData.data.length; i += 4) {
+        newImageData.data[i] = fixPixel(factor * (imageData.data[i] - 128) + 128);
+        newImageData.data[i + 1] = fixPixel(factor * (imageData.data[i + 1] - 128) + 128);
+        newImageData.data[i + 2] = fixPixel(factor * (imageData.data[i + 2] - 128) + 128);
+        newImageData.data[i + 3] = 255;
+    }
+
+    return newImageData;
 }
 
-function blurChange(value) {
-    blur = value;
-    setFilters();
+function saturationChange(imageData) {
+    let factor = saturation / 100.0;
+    let newImageData = new ImageData(canvas.width, canvas.height);
+
+    for (let i = 0; i < imageData.data.length; i += 4) {
+        var red = imageData.data[i];
+        var green = imageData.data[i + 1];
+        var blue = imageData.data[i + 2];
+        var sat = Math.sqrt(red * red * 0.299 + green * green * 0.587 + blue * blue * 0.114);
+
+        newImageData.data[i] = fixPixel(sat + (red - sat) * factor);
+        newImageData.data[i + 1] = fixPixel(sat + (green - sat) * factor);
+        newImageData.data[i + 2] = fixPixel(sat + (blue - sat) * factor);
+
+        newImageData.data[i + 3] = 255;
+    }
+
+    return newImageData;
 }
 
-function sepiaChange(value) {
-    sepia = value;
-    setFilters();
-}
-
-function invertChange(value) {
-    invert = value;
-    setFilters();
-}
-
-function setFilters() {
-    canvas.style.filter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%) blur(${blur}px) sepia(${sepia}%) invert(${invert}%)`;
+function fixPixel(pixel) {
+    if (pixel > 255) {
+        return 255;
+    } else if (pixel < 0) {
+        return 0;
+    }
+    return pixel;
 }
 
 function setPosition(e) {
