@@ -4,6 +4,35 @@ var map, infoWindow;
 var userMarker;
 
 function appStart() {
+    document.addEventListener('keydown', moveUserMarker);
+}
+
+function moveUserMarker(e) {
+    if (userMarker == undefined) {
+        return;
+    }
+
+    var position = userMarker.getPosition();
+    var latLng;
+    switch (e.keyCode) {
+        // Left
+        case 37:
+            latLng = new google.maps.LatLng(position.lat(), position.lng() - 0.2);
+            break;
+        // Right
+        case 39:
+            latLng = new google.maps.LatLng(position.lat(), position.lng() + 0.2);
+            break;
+        // Up
+        case 38:
+            latLng = new google.maps.LatLng(position.lat() + 0.2, position.lng());
+            break;
+        // Down
+        case 40:
+            latLng = new google.maps.LatLng(position.lat() - 0.2, position.lng());
+            break;
+    }
+    userMarker.setPosition(latLng);
 }
 
 function initMap() {
