@@ -85,9 +85,31 @@ function contrastChange(value) {
     let newImageData = new ImageData(canvas.width, canvas.height);
 
     for (let i = 0; i < imageData.data.length; i += 4) {
-        newImageData.data[i] = fixPixel(factor * (imageData.data[i] - 128) + 128)
-        newImageData.data[i + 1] = fixPixel(factor * (imageData.data[i + 1] - 128) + 128)
-        newImageData.data[i + 2] = fixPixel(factor * (imageData.data[i + 2] - 128) + 128)
+        newImageData.data[i] = fixPixel(factor * (imageData.data[i] - 128) + 128);
+        newImageData.data[i + 1] = fixPixel(factor * (imageData.data[i + 1] - 128) + 128);
+        newImageData.data[i + 2] = fixPixel(factor * (imageData.data[i + 2] - 128) + 128);
+        newImageData.data[i + 3] = 255;
+    }
+
+    ctx.putImageData(newImageData, 0, 0);
+}
+
+function saturationChange(value) {
+    saturation = value;
+
+    let factor = value / 100.0;
+    let newImageData = new ImageData(canvas.width, canvas.height);
+
+    for (let i = 0; i < imageData.data.length; i += 4) {
+        var red = imageData.data[i];
+        var green = imageData.data[i + 1];
+        var blue = imageData.data[i + 2];
+        var saturation = Math.sqrt(red * red * 0.299 + green * green * 0.587 + blue * blue * 0.114);
+
+        newImageData.data[i] = fixPixel(saturation + (red - saturation) * factor);
+        newImageData.data[i + 1] = fixPixel(saturation + (green - saturation) * factor);
+        newImageData.data[i + 2] = fixPixel(saturation + (blue - saturation) * factor);
+
         newImageData.data[i + 3] = 255;
     }
 
@@ -101,11 +123,6 @@ function fixPixel(pixel) {
         return 0;
     }
     return pixel;
-}
-
-function saturationChange(value) {
-    saturation = value;
-    setFilters();
 }
 
 function blurChange(value) {
@@ -124,7 +141,7 @@ function invertChange(value) {
 }
 
 function setFilters() {
-    canvas.style.filter = `saturate(${saturation}%) blur(${blur}px) sepia(${sepia}%) invert(${invert}%)`;
+    canvas.style.filter = `blur(${blur}px) sepia(${sepia}%) invert(${invert}%)`;
 }
 
 function setPosition(e) {
