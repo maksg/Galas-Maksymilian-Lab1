@@ -4,9 +4,9 @@ var selectedNote = 0;
 var notes = [];
 
 const NoteColor = {
-    red: 'red',
-    green: 'green',
-    blue: 'blue'
+    red: '#b71c1c',
+    green: '#1b5e20',
+    blue: '#0d47a1'
 }
 
 function Note(title, content, color, pinned, createdDate) {
@@ -34,9 +34,10 @@ function appStart() {
     // Add click action to new note button
     var newNoteButton = document.querySelector('#newNoteButton');
     newNoteButton.addEventListener('click', function (e) {
-        var note = new Note('', '', NoteColor.green, false, new Date());
+        var note = new Note('', '', NoteColor.red, false, new Date());
         addNote(note);
         notes.push(note);
+        sortNotes();
         saveNotes();
     });
 
@@ -66,9 +67,27 @@ function appStart() {
     // Add click action to color buttons
     var colorButtons = document.querySelectorAll('.colorButton');
     colorButtons.forEach(button => {
-        button.style.backgroundColor = button.value;
+        var colorValue = button.value;
+        if (colorValue == 'red') {
+            button.style.backgroundColor = NoteColor.red;
+        } else if (colorValue == 'green') {
+            button.style.backgroundColor = NoteColor.green;
+        } else if (colorValue == 'blue') {
+            button.style.backgroundColor = NoteColor.blue;
+        }
+
         button.addEventListener('click', function (e) {
-            var color = e.target.value;
+            var color = NoteColor.red;
+            var colorValue = e.target.value;
+
+            if (colorValue == 'red') {
+                color = NoteColor.red;
+            } else if (colorValue == 'green') {
+                color = NoteColor.green;
+            } else if (colorValue == 'blue') {
+                color = NoteColor.blue;
+            }
+            
             notes[selectedNote].color = color;
             noteContent.style.backgroundColor = color;
             saveNotes();
@@ -87,7 +106,7 @@ function addNote(note) {
     var row = notesTable.insertRow(0);
     var cell = row.insertCell(0);
     cell.note = note;
-    cell.style.backgroundColor = 'red';
+    cell.style.backgroundColor = '#4e342e';
     cell.pinned = false;
     cell.innerHTML = `<b>${note.title}</b><br><p>${note.content}</p><br><p>${note.getCreatedDate()}</p>`;
 
@@ -113,7 +132,7 @@ function updateNoteCells() {
         var note = notes[index];
         cell.innerHTML = `<b>${note.title}</b><br><p>${note.content}</p><br><p>${note.getCreatedDate()}</p>`;
         if (index == selectedNote) {
-            cell.style.backgroundColor = 'red';
+            cell.style.backgroundColor = '#4e342e';
         } else if (note.pinned) {
             cell.style.backgroundColor = 'gray';
         } else {
@@ -124,16 +143,12 @@ function updateNoteCells() {
     saveNotes();
 }
 
-function colorNotes() {
-
-}
-
 // Load notes from local storage
 function loadNotes() {
     var loadedNotes = JSON.parse(localStorage.getItem('notes'));
 
     if (loadedNotes == null) {
-        notes = [new Note('', '', NoteColor.green, false, new Date())];
+        notes = [new Note('', '', NoteColor.red, false, new Date())];
     } else {
         notes = [];
         loadedNotes.forEach(note => {
