@@ -33,8 +33,14 @@
             display: flex;
             flex-direction: column;
         }
+        #headerView {
+            width: 100%;
+            display: flex;
+            flex-direction: row\;
+        }
         #noteTitle {
-            margin: 10px;
+            flex-grow: 10;
+            font-size: 2.0em;
             width: 50%;
             background-color: thistle;
         }
@@ -45,6 +51,7 @@
         }
         #notesTable {
             width: 100%;
+            border-collapse: collapse;
         }
         #notesTable tr td {
             padding: 10px;
@@ -70,7 +77,10 @@
             </table>
         </div>
         <div id="noteView">
-            <input id="noteTitle" type="text" />
+            <div id="headerView">
+                <input id="noteTitle" type="text" />
+                <button id="pinButton">Przypnij</button>
+            </div>
             <textarea id="noteContent"></textarea>
         </div>
     </div>

@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', appStart);
 
 var selectedNote = 0;
+var notes = [];
 
 const NoteColor = {
     green: 'green',
@@ -25,8 +26,6 @@ function Note(title, content, color, pinned, createdDate) {
     }
 }
 
-var notes = [];
-
 function appStart() {
     loadNotes();
 
@@ -35,12 +34,7 @@ function appStart() {
         var note = new Note('', '', NoteColor.green, false, new Date());
         addNote(note);
         notes.push(note);
-
         saveNotes();
-    });
-
-    notes.forEach( note => {
-        addNote(note);
     });
 
     var noteTitle = document.querySelector('#noteTitle');
@@ -52,6 +46,14 @@ function appStart() {
     var noteContent = document.querySelector('#noteContent');
     noteContent.addEventListener('input', function (e) {
         notes[selectedNote].content = e.target.value;
+        updateNoteCells();
+    });
+
+    var pinButton = document.querySelector('#pinButton');
+    pinButton.innerHTML = notes[selectedNote].pinned ? 'Odepnij' : 'Przypnij';
+    pinButton.addEventListener('click', function (e) {
+        notes[selectedNote].pinned = !notes[selectedNote].pinned;
+        sortNotes();
         updateNoteCells();
     });
 }
@@ -67,6 +69,7 @@ function addNote(note) {
     var cell = row.insertCell(0);
     cell.note = note;
     cell.style.backgroundColor = 'red';
+    cell.pinned = false;
     cell.innerHTML = `<b>${note.title}</b><br><p>${note.content}</p><br><p>${note.getCreatedDate()}</p>`;
 
     noteTitle.value = note.title;
@@ -89,6 +92,13 @@ function updateNoteCells() {
         var index = notesTableCells.length - 2 - i;
         var note = notes[index];
         cell.innerHTML = `<b>${note.title}</b><br><p>${note.content}</p><br><p>${note.getCreatedDate()}</p>`;
+        if (index == selectedNote) {
+            cell.style.backgroundColor = 'red';
+        } else if (note.pinned) {
+            cell.style.backgroundColor = 'gray';
+        } else {
+            cell.style.backgroundColor = '';
+        }
     }
 
     saveNotes();
@@ -109,30 +119,61 @@ function loadNotes() {
             notes.push(new Note(note.title, note.content, note.color, note.pinned, new Date(note.createdDate)));
         });
     }
+
+    sortNotes();
+    
+    var notesTableCells = notesTable.querySelectorAll('tr td');
+    selectNote(0, notesTableCells)();
 }
 
 function saveNotes() {
     localStorage.setItem('notes', JSON.stringify(notes));
 }
 
+function sortNotes() {
+    let currentNote = notes[selectedNote];
+
+    notes.sort(function (a, b) {
+        if (a.pinned) {
+            if (b.pinned) {
+                return a.createdDate - b.createdDate
+            } else {
+                return 1;
+            }
+        } else {
+            if (b.pinned) {
+                return -1;
+            } else {
+                return a.createdDate - b.createdDate
+            }
+        }
+    });
+
+    var notesTable = document.querySelector('#notesTable');
+    var notesTableCells = notesTable.querySelectorAll('tr');
+    for (var i = 0; i < notesTableCells.length - 1; i++) {
+        notesTableCells[i].remove();
+    }
+
+    notes.forEach(note => {
+        addNote(note);
+    });
+
+    notesTableCells = notesTable.querySelectorAll('tr td');
+    var index = notes.findIndex(note => note == currentNote);
+    index = notesTableCells.length - 2 - index;
+    selectNote(index, notesTableCells)();
+}
+
 var selectNote = function (i, notesTableCells) {
     return function () {
-        var currentCell = notesTableCells[i];
-        notesTableCells.forEach(cell => {
-            cell.style.backgroundColor = '';
-            cell.style.borderColor = 'black';
-            if (cell.pinned) {
-                cell.style.borderWidth = "20px";
-            } else {
-                cell.style.borderWidth = "1px";
-            }
-        })
-        currentCell.style.backgroundColor = 'red';
-
         selectedNote = notesTableCells.length - 2 - i;
 
         var note = notes[selectedNote];
         noteTitle.value = note.title;
         noteContent.value = note.content;
+        pinButton.innerHTML = note.pinned ? 'Odepnij' : 'Przypnij';
+
+        updateNoteCells();
     }
 }
