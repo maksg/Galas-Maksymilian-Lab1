@@ -12,15 +12,19 @@ var invert = 0;
 
 var position = { x: 0, y: 0 };
 
+let imageData;
+
 function appStart() {
     canvas = document.querySelector('#ps');
     ctx = canvas.getContext('2d');
 
     let img = new Image();
-    img.src = 'https://picsum.photos/600/300/?random=1';
-    //img.src = './grafika.jpg';
+    //img.src = 'https://picsum.photos/600/300/?random=1';
+    img.src = './grafika.jpg';
     img.addEventListener('load', () => {
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     })
 
     let brightnessSlider = document.querySelector('#brightness');
@@ -60,7 +64,27 @@ function appStart() {
 
 function brightnessChange(value) {
     brightness = value;
-    setFilters();
+
+    let factor = value / 100.0;
+    let newImageData = new ImageData(canvas.width, canvas.height);
+
+    for (let i = 0; i < imageData.data.length; i += 4) {
+        newImageData.data[i] = fixPixel(imageData.data[i] * factor);
+        newImageData.data[i + 1] = fixPixel(imageData.data[i + 1] * factor);
+        newImageData.data[i + 2] = fixPixel(imageData.data[i + 2] * factor);
+        newImageData.data[i + 3] = 255;
+    }
+
+    ctx.putImageData(newImageData, 0, 0);
+}
+
+function fixPixel(pixel) {
+    if (pixel > 255) {
+        return 255;
+    } else if (pixel < 0) {
+        return 0;
+    }
+    return pixel;
 }
 
 function contrastChange(value) {
@@ -89,7 +113,7 @@ function invertChange(value) {
 }
 
 function setFilters() {
-    canvas.style.filter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%) blur(${blur}px) sepia(${sepia}%) invert(${invert}%)`;
+    canvas.style.filter = `contrast(${contrast}%) saturate(${saturation}%) blur(${blur}px) sepia(${sepia}%) invert(${invert}%)`;
 }
 
 function setPosition(e) {
