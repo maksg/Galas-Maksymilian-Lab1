@@ -23,6 +23,9 @@ function Note(title, content, color, pinned, createdDate) {
         var year = createdDate.getFullYear();
         var hours = createdDate.getHours();
         var minutes = createdDate.getMinutes();
+        if (minutes < 10) {
+            minutes = '0' + minutes;
+        }
 
         return `${date}.${month}.${year} ${hours}:${minutes}`
     }
